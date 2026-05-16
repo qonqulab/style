@@ -1,66 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import React, { useState } from 'react';
+import Sidebar from '@/components/Sidebar';
+import StyleShowcase from '@/components/StyleShowcase';
+import GalleryView from '@/components/GalleryView';
+import ComparisonView from '@/components/ComparisonView';
+import { stylesData } from '@/data/styles';
 
 export default function Home() {
+  const [activeId, setActiveId] = useState('gallery');
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+
+  const activeStyle = stylesData.find(s => s.id === activeId);
+
+  const toggleCompare = (id: string) => {
+    setCompareIds(prev => {
+      if (prev.includes(id)) return prev.filter(i => i !== id);
+      if (prev.length >= 2) return [prev[1], id];
+      return [...prev, id];
+    });
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="main-wrapper">
+      <Sidebar activeId={activeId} setActiveId={setActiveId} />
+      
+      <div className="content-area">
+        {activeId === 'gallery' ? (
+          <GalleryView 
+            onSelect={setActiveId} 
+            compareIds={compareIds}
+            onToggleCompare={toggleCompare}
+          />
+        ) : activeId === 'comparison' ? (
+          <ComparisonView 
+            styleIds={compareIds} 
+            onBack={() => setActiveId('gallery')} 
+          />
+        ) : (
+          activeStyle && <StyleShowcase style={activeStyle} />
+        )}
+      </div>
+
+      <style jsx global>{`
+        .main-wrapper {
+          display: flex;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+        }
+
+        .content-area {
+          flex: 1;
+          background: hsl(var(--bg-primary));
+          height: 100vh;
+          overflow-y: auto;
+          overflow-x: hidden;
+          scroll-behavior: smooth;
+        }
+
+        @media (max-width: 768px) {
+          .main-wrapper {
+            flex-direction: column;
+          }
+          
+          .content-area {
+            height: calc(100vh - 120px); /* Adjust for mobile menu height */
+          }
+        }
+      `}</style>
+    </main>
   );
 }
