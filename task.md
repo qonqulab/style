@@ -87,7 +87,13 @@ Each style includes a preview card, a detailed explanation, and its pros/cons.
 - [x] Style Comparison Toggle (Side-by-Side View)
 - [x] Smooth Transitions between style categories
 - [x] "Wow" Home Page with dynamic preview (Gallery Overview)
-- [ ] Client PDF Export (Optional)
+- [ ] Client PDF Export (Generate design spec sheet)
+- [ ] Global Search Bar (Find styles by name or tags)
+- [ ] Category Filtering (Minimalist, Brutalist, Glassmorphic, etc.)
 
-
+## Phase 4: Production Hardening
+- [ ] Full Dark Mode Support for UI (Sidebar/Header toggle)
+- [ ] Accessibility Audit (ARIA labels & Keyboard navigation)
+- [ ] Performance Optimization (Lazy loading for large style sets)
+- [ ] SEO & Social Share Preview (OpenGraph images)
 

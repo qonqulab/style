@@ -101,3 +101,21 @@ p {
   color: hsl(var(--fg-secondary));
 }
 
+
+@media print {
+  .sidebar, .theme-toggle, .mobile-scroll-indicator, .gallery-controls, .compare-bar, .header-actions {
+    display: none !important;
+  }
+  
+  html, body {
+    overflow: visible !important;
+    height: auto !important;
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+}

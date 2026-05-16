@@ -15,9 +15,13 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
     setShowCode(false);
   }, [style.id, style.background]);
 
+  const getDynamicCSS = () => {
+    return style.cssCode.replace(/\[BG_COLOR\]/g, customBgColor || style.background);
+  };
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(style.cssCode);
-    alert('CSS copied to clipboard!');
+    navigator.clipboard.writeText(getDynamicCSS());
+    alert('Full Component CSS copied to clipboard!');
   };
 
   // Combine suggested colors with black and white, and remove duplicates
@@ -28,13 +32,19 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
       <header className="showcase-header">
         <div className="header-flex">
           <h1>{style.name}</h1>
-          <button 
-            className={`code-toggle ${showCode ? 'active' : ''}`}
-            onClick={() => setShowCode(!showCode)}
-          >
-            {showCode ? 'Hide Code' : 'View CSS'}
-          </button>
+          <div className="header-actions">
+            <button className="pdf-btn" onClick={() => window.print()}>
+              <span>📄</span> Export PDF
+            </button>
+            <button 
+              className={`code-toggle ${showCode ? 'active' : ''}`}
+              onClick={() => setShowCode(!showCode)}
+            >
+              {showCode ? 'Hide CSS' : 'View CSS'}
+            </button>
+          </div>
         </div>
+
         
         <div className="controls">
           <div className="control-item">
@@ -83,12 +93,13 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
       {showCode && (
         <div className="code-snippet">
           <div className="code-header">
-            <span>CSS Snippet</span>
-            <button onClick={copyToClipboard}>Copy Code</button>
+            <span>Dynamic Component CSS</span>
+            <button onClick={copyToClipboard}>Copy Full Code</button>
           </div>
-          <pre><code>{style.cssCode}</code></pre>
+          <pre><code>{getDynamicCSS()}</code></pre>
         </div>
       )}
+
 
 
 
@@ -112,25 +123,25 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
         </div>
       </section>
 
+      <section className="info-grid">
+        <div className="info-card pros">
+          <h3>Advantages</h3>
+          <ul>
+            {style.pros.map((pro, i) => <li key={i}>{pro}</li>)}
+          </ul>
+        </div>
+        <div className="info-card cons">
+          <h3>Considerations</h3>
+          <ul>
+            {style.cons.map((con, i) => <li key={i}>{con}</li>)}
+          </ul>
+        </div>
+      </section>
 
-      <div className="info-grid">
-        <div className="info-section pros">
-          <h3>Pros</h3>
-          <ul>
-            {style.pros.map((pro, i) => (
-              <li key={i}>{pro}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="info-section cons">
-          <h3>Cons</h3>
-          <ul>
-            {style.cons.map((con, i) => (
-              <li key={i}>{con}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
+
+
+
+
 
       <style jsx>{`
         .showcase {
@@ -659,6 +670,76 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
           margin-bottom: 2rem;
         }
 
+        .header-actions {
+          display: flex;
+          gap: 0.75rem;
+          align-items: center;
+        }
+
+        .pdf-btn {
+          padding: 0.8rem 1.2rem;
+          border-radius: 0.6rem;
+          border: 1px solid hsl(var(--border));
+          background: #fff;
+          color: #000;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all 0.2s;
+        }
+
+        .pdf-btn:hover {
+          background: #f4f4f4;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .sidebar, .controls, .header-actions, .code-toggle, .code-snippet, .theme-toggle {
+            display: none !important;
+          }
+          .showcase {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            background: white !important;
+          }
+          .preview-area {
+            height: 550px !important;
+            border: none !important;
+            break-inside: avoid;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+          .preview-card {
+            transform: scale(1.2) !important;
+          }
+          .info-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 2rem !important;
+            margin-top: 2rem !important;
+          }
+          .showcase-header h1 {
+            font-size: 3.5rem !important;
+            color: #000 !important;
+            margin-bottom: 1rem !important;
+          }
+          .description {
+            font-size: 1.2rem !important;
+            color: #333 !important;
+            max-width: 100% !important;
+          }
+        }
+
+
         .showcase-header h1 {
           font-size: 3rem;
           margin: 0;
@@ -755,21 +836,30 @@ export default function StyleShowcase({ style }: { style: DesignStyle }) {
         .info-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 3rem;
-          margin-top: 4rem;
+          gap: 2rem;
+          margin-top: 3rem;
         }
 
-        .info-section h3 {
+        .info-card {
+          background: hsl(var(--bg-secondary));
+          padding: 2rem;
+          border-radius: 1rem;
+          border: 1px solid hsl(var(--border));
+        }
+
+        .info-card h3 {
+          font-size: 1.2rem;
           margin-bottom: 1.5rem;
-          font-size: 1.5rem;
+          color: hsl(var(--fg-primary));
         }
 
-        .info-section ul {
+        .info-card ul {
           list-style: none;
+          padding: 0;
         }
 
-        .info-section li {
-          margin-bottom: 1rem;
+        .info-card li {
+          margin-bottom: 0.75rem;
           padding-left: 1.5rem;
           position: relative;
           line-height: 1.5;

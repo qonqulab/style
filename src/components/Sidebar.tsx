@@ -1,15 +1,30 @@
+import React from 'react';
 import { stylesData } from '@/data/styles';
 
 export default function Sidebar({ activeId, setActiveId }: { activeId: string, setActiveId: (id: string) => void }) {
+  const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
   return (
     <aside className="sidebar">
-      <a href="https://qonqu.com/" target="_blank" rel="noopener noreferrer" className="sidebar-header-link">
-        <div className="sidebar-header">
-          <h2>QONQU StyleLib</h2>
-          <p>Design Style Showcase</p>
-        </div>
-      </a>
-
+      <div className="sidebar-top">
+        <a href="https://qonqu.com/" target="_blank" rel="noopener noreferrer" className="sidebar-header-link">
+          <div className="sidebar-header">
+            <h2>QONQU StyleLib</h2>
+            <p>Design Style Showcase</p>
+          </div>
+        </a>
+        <button className="theme-toggle" onClick={toggleTheme} title="Toggle Theme">
+          {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+      </div>
 
       <nav className="sidebar-nav">
         <button
@@ -30,6 +45,7 @@ export default function Sidebar({ activeId, setActiveId }: { activeId: string, s
         ))}
         <div className="mobile-scroll-indicator">Swipe →</div>
       </nav>
+
 
       <style jsx>{`
         .sidebar {
@@ -56,10 +72,37 @@ export default function Sidebar({ activeId, setActiveId }: { activeId: string, s
           opacity: 0.8;
         }
 
-
-        .sidebar-header {
+        .sidebar-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
           margin-bottom: 3rem;
         }
+
+        .theme-toggle {
+          background: hsl(var(--bg-primary));
+          border: 1px solid hsl(var(--border));
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 1.2rem;
+          transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+          transform: rotate(15deg) scale(1.1);
+          background: hsl(var(--border));
+        }
+
+
+        .sidebar-header {
+          margin-bottom: 0;
+        }
+
 
         .sidebar-header h2 {
           font-size: 1.5rem;
