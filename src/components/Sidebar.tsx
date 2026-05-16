@@ -13,38 +13,52 @@ export default function Sidebar({ activeId, setActiveId }: { activeId: string, s
   };
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" role="complementary">
       <div className="sidebar-top">
-        <a href="https://qonqu.com/" target="_blank" rel="noopener noreferrer" className="sidebar-header-link">
+        <a 
+          href="https://qonqu.com/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="sidebar-header-link"
+          aria-label="Visit QONQU Website"
+        >
           <div className="sidebar-header">
             <h2>QONQU StyleLib</h2>
             <p>Design Style Showcase</p>
           </div>
         </a>
-        <button className="theme-toggle" onClick={toggleTheme} title="Toggle Theme">
+        <button 
+          className="theme-toggle" 
+          onClick={toggleTheme} 
+          title="Toggle Theme"
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
           {theme === 'light' ? '🌙' : '☀️'}
         </button>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Style Navigation">
         <button
           onClick={() => setActiveId('gallery')}
           className={`nav-item gallery-btn ${activeId === 'gallery' ? 'active' : ''}`}
+          aria-current={activeId === 'gallery' ? 'page' : undefined}
         >
           Overview Gallery
         </button>
-        <div className="divider"></div>
+        <div className="divider" role="presentation"></div>
         {stylesData.map((style) => (
           <button
             key={style.id}
             onClick={() => setActiveId(style.id)}
             className={`nav-item ${activeId === style.id ? 'active' : ''}`}
+            aria-current={activeId === style.id ? 'page' : undefined}
           >
             {style.name}
           </button>
         ))}
-        <div className="mobile-scroll-indicator">Swipe →</div>
+        <div className="mobile-scroll-indicator" aria-hidden="true">Swipe →</div>
       </nav>
+
 
 
       <style jsx>{`
@@ -133,8 +147,14 @@ export default function Sidebar({ activeId, setActiveId }: { activeId: string, s
         }
 
         .nav-item:hover {
-          background: hsl(var(--border));
+          background: hsl(var(--bg-primary));
           color: hsl(var(--fg-primary));
+        }
+
+        .nav-item:focus-visible {
+          outline: 2px solid hsl(var(--accent));
+          outline-offset: -2px;
+          background: hsl(var(--bg-primary));
         }
 
         .nav-item.active {
